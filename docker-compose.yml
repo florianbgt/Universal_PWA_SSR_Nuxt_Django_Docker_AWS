@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    env_file:
+      - .env
+  api:
+    restart: always
+    build:
+      context: api
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./api:/code
+      - ./media:/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - .env
+  pwa:
+    restart: always
+    build:
+      context: pwa
+      dockerfile: Dockerfile
+    command: npm run dev
+    volumes:
+      - ./pwa:/code
+      - /code/node_modules
+      - /code/.nuxt
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env

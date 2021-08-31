@@ -8,7 +8,7 @@ SECRET_KEY = 'django-insecure-f6yl@@-*mw2edse62=+l@zm3f_2*ywix^^!2&_k$2=yhw&w@i&
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', 'api']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -64,7 +64,7 @@ EMAIL_PORT = os.environ.get("EMAIL_PORT")
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
 
-CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS").split(" ")
+CORS_ALLOWED_ORIGINS = [os.environ.get("FRONTEND_URL")]
 
 ROOT_URLCONF = '_project.urls'
 

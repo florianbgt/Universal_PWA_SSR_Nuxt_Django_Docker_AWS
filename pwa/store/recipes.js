@@ -34,8 +34,8 @@ export const actions = {
     if (process.server) {
       response.forEach((recipe) => {
         recipe.image = recipe.image.replace(
-          process.env.BASE_URL,
-          process.env.BROWSER_BASE_URL
+          this.$config.axios.baseURL,
+          this.$config.axios.browserBaseURL
         );
       });
     }

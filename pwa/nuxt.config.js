@@ -1,38 +1,44 @@
 export default {
   head: {
-    title: 'pwa',
+    title: "Awesome Recipes!",
     meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' },
-      { name: 'format-detection', content: 'telephone=no' }
+      { charset: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      {
+        hid: "description",
+        name: "description",
+        content: "Browse the most delicious recipes",
+      },
+      {
+        hid: "keyword",
+        name: "keyword",
+        content:
+          "Recipes",
+      },
+      { name: "format-detection", content: "telephone=no" },
     ],
-    link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ]
+    link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
   },
 
   watchers: {
     webpack: {
-      poll: true
-    }
+      poll: true,
+    },
   },
 
   css: ["~/assets/main.css"],
 
-  plugins: [
-  ],
+  plugins: [],
 
   components: true,
 
-  buildModules: [
-  ],
+  buildModules: [],
 
   modules: [
-    'bootstrap-vue/nuxt',
-    '@nuxtjs/axios',
-    '@nuxtjs/auth-next',
-    '@nuxtjs/pwa',
+    "bootstrap-vue/nuxt",
+    "@nuxtjs/axios",
+    "@nuxtjs/auth-next",
+    "@nuxtjs/pwa",
   ],
 
   router: {
@@ -45,51 +51,52 @@ export default {
 
   publicRuntimeConfig: {
     axios: {
-      browserBaseURL: process.env.BROWSER_BASE_URL
-    }
+      browserBaseURL: process.env.API_URL,
+    },
   },
 
   privateRuntimeConfig: {
     axios: {
-      baseURL: process.env.BASE_URL
-    }
+      baseURL: "http://api:8000/",
+    },
   },
 
   auth: {
     strategies: {
       local: {
-        scheme: 'refresh',
+        scheme: "refresh",
         token: {
-          property: 'access',
+          property: "access",
         },
         refreshToken: {
-          property: 'refresh',
-          data: 'refresh',
+          property: "refresh",
+          data: "refresh",
         },
         user: {
           property: false,
         },
         endpoints: {
-          login: { url: '/token/', method: 'post' },
-          refresh: { url: '/token/refresh/', method: 'post' },
-          user: { url: '/user/', method: 'get' },
-          logout: false
+          login: { url: "/token/", method: "post" },
+          refresh: { url: "/token/refresh/", method: "post" },
+          user: { url: "/user/", method: "get" },
+          logout: false,
         },
-      }
+      },
     },
     redirect: {
-      login: '/login',
-      logout: '/login',
-      home: '/'
+      login: "/login",
+      logout: "/login",
+      home: "/",
     },
   },
 
   pwa: {
     manifest: {
-      lang: 'en'
-    }
+      lang: "en",
+      name: "Awesome Recipes!",
+      short_name: "Awesome Recipes!"
+    },
   },
 
-  build: {
-  }
-}
+  build: {},
+};

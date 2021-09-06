@@ -12,8 +12,7 @@ export default {
       {
         hid: "keyword",
         name: "keyword",
-        content:
-          "Recipes",
+        content: "Recipes",
       },
       { name: "format-detection", content: "telephone=no" },
     ],
@@ -51,7 +50,9 @@ export default {
 
   publicRuntimeConfig: {
     axios: {
-      browserBaseURL: process.env.API_URL,
+      browserBaseURL: `${
+        parseInt(process.env.PRODUCTION) === 1 ? "https://" : "http://"
+      }${process.env.API_HOST}/`,
     },
   },
 
@@ -94,7 +95,7 @@ export default {
     manifest: {
       lang: "en",
       name: "Awesome Recipes!",
-      short_name: "Awesome Recipes!"
+      short_name: "Awesome Recipes!",
     },
   },
 

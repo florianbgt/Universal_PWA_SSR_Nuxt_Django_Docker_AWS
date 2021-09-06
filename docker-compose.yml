@@ -16,12 +16,13 @@ services:
     volumes:
       - ./api:/code
       - ./media:/media
-    ports:
-      - "8000:8000"
     depends_on:
       - db
     env_file:
       - .env
+    labels:
+      - traefik.http.routers.api.rule=Host(`${API_HOST}`)
+      - traefik.http.services.api.loadbalancer.server.port=8000
   pwa:
     restart: always
     build:
@@ -32,7 +33,22 @@ services:
       - ./pwa:/code
       - /code/node_modules
       - /code/.nuxt
-    ports:
-      - "3000:3000"
     env_file:
       - .env
+    labels:
+      - traefik.http.routers.pwa.rule=Host(`${FRONTEND_HOST}`)
+      - traefik.http.services.pwa.loadbalancer.server.port=3000
+    
+  traefik:
+    image: traefik:v2.2
+    command:
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --api.insecure=true
+      - --providers.docker
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro

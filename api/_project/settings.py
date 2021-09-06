@@ -4,11 +4,17 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-f6yl@@-*mw2edse62=+l@zm3f_2*ywix^^!2&_k$2=yhw&w@i&'
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
-DEBUG = True
+DEBUG = 1 - int(os.environ.get("PRODUCTION"))
 
-ALLOWED_HOSTS = ['localhost', 'api']
+ALLOWED_HOSTS = [os.environ.get("API_HOST"), 'api']
+
+if bool(int(os.environ.get("PRODUCTION"))):
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -24,6 +30,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_rest_passwordreset',
     'corsheaders',
+    'storages',
     'django_cleanup',   #need to be last
 ]
 
@@ -48,6 +55,7 @@ REST_FRAMEWORK = {
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware', #need to be first
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', #need to be as high as possible but after SecurityMiddleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -64,7 +72,7 @@ EMAIL_PORT = os.environ.get("EMAIL_PORT")
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
 
-CORS_ALLOWED_ORIGINS = [os.environ.get("FRONTEND_URL")]
+CORS_ALLOWED_ORIGINS = [('https://' if bool(int(os.environ.get("PRODUCTION"))) else 'http://') + os.environ.get("FRONTEND_HOST")]
 
 ROOT_URLCONF = '_project.urls'
 
@@ -123,8 +131,20 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static').replace('\\', '/')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-MEDIA_URL = '/api/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR.parent, 'media').replace('\\', '/')
+if bool(int(os.environ.get('USE_S3'))):
+    AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = 'awesomerecipesbucket'
+    AWS_S3_REGION_NAME = 'us-east-2'
+    AWS_S3_SIGNATURE_VERSION = 's3v4'
+    AWS_S3_FILE_OVERWRITE = False
+    AWS_S3_ENDPOINT_URL = f"https://{os.environ.get('AWS_STORAGE_BUCKET_NAME')}.s3.{os.environ.get('AWS_S3_REGION_NAME')}.amazonaws.com/media/"
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+else:
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR.parent, 'media').replace('\\', '/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
